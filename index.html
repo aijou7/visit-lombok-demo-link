@@ -4,13 +4,40 @@
   <meta charset="utf-8">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
   <title>Visit Lombok preview</title>
-  <meta http-equiv="refresh" content="0;url=https://could-insights-tony-posts.trycloudflare.com/">
-  <style>body{font:16px Arial,sans-serif;max-width:34rem;margin:20vh auto;padding:0 1.5rem;color:#222}a{color:#695b1f}</style>
+  <style>
+    body{font:16px Arial,sans-serif;max-width:34rem;margin:20vh auto;padding:0 1.5rem;color:#222}
+    a{color:#695b1f} .muted{color:#666;font-size:14px}
+  </style>
 </head>
 <body>
-  <p>Opening the Visit Lombok previewâ€¦</p>
-  <p>If it does not open, <a href="https://could-insights-tony-posts.trycloudflare.com/">open the preview here</a>.</p>
-  <script>location.replace('https://could-insights-tony-posts.trycloudflare.com/');</script>
+  <h1>Visit Lombok preview</h1>
+  <p id="status">Connecting to the latest preview...</p>
+  <p id="offline" class="muted" hidden>The preview is temporarily unavailable. It may be offline while the local server restarts.</p>
+  <p><a id="retry" href="./">Try again</a></p>
+  <script>
+    (async () => {
+      const status = document.getElementById('status');
+      const offline = document.getElementById('offline');
+      const retry = document.getElementById('retry');
+      try {
+        const target = new URL('target.txt', document.baseURI);
+        target.searchParams.set('v', Date.now().toString());
+        const response = await fetch(target, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Preview target unavailable');
+        const destination = (await response.text()).trim();
+        if (!/^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/?$/.test(destination)) {
+          throw new Error('Invalid preview target');
+        }
+        retry.href = destination;
+        status.textContent = 'Opening the latest Visit Lombok preview...';
+        location.replace(destination);
+      } catch {
+        status.textContent = 'Could not connect to the preview right now.';
+        offline.hidden = false;
+      }
+    })();
+  </script>
 </body>
 </html>
